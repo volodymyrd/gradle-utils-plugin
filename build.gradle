@@ -1,9 +1,16 @@
 plugins {
-    id 'java-gradle-plugin'
     id 'groovy'
+    id 'java-gradle-plugin'
+    id "maven-publish"
 }
 
 defaultTasks 'clean', 'build'
+
+def compatibilityVersion = 1.8
+sourceCompatibility = compatibilityVersion
+targetCompatibility = compatibilityVersion
+group = 'com.volmyr'
+version = '0.0.1'
 
 repositories {
     jcenter()
@@ -18,6 +25,10 @@ gradlePlugin {
         greeting {
             id = 'com.volmyr.gradle_plugins.utils.greeting'
             implementationClass = 'com.volmyr.gradle_plugins.utils.GradleUtilsPluginPlugin'
+        }
+        protoToPojo {
+            id = 'com.volmyr.gradle_plugins.utils.protoToPojo'
+            implementationClass = 'com.volmyr.gradle_plugins.utils.ProtoToPojoGradlePlugin'
         }
     }
 }
