@@ -1,2 +1,2 @@
 # gradle-utils-plugin
-Gradle utils pligin
+Gradle utils plugin
