@@ -71,3 +71,62 @@ protobuf {
 clean {
     delete protobuf.generatedFilesBaseDir
 }
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle utils plugins',
+                'Implementation-Version': version,
+                'Built-By': System.getProperty('user.name'),
+                'Built-Date': new Date(),
+                'Built-JDK': System.getProperty('java.version'),
+                'Built-Gradle': gradle.gradleVersion
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "Gradle-Utils-Plugins"
+            url = uri("https://maven.pkg.github.com/volodymyrd/gradle-utils-plugin")
+            credentials {
+                // ~/.gradle/gradle.properties
+                username = project.findProperty("repo.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("mvn_repo_rw.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'Gradle Utils plugins')
+                root.appendNode('description', 'Gradle Utils plugins.')
+                root.appendNode('url', 'https://github.com/volodymyrd/gradle-utils-plugin')
+                root.appendNode('inceptionYear', '2021')
+
+                def developers = root.appendNode('developers')
+                def vdotsenko = developers.appendNode('developer')
+                vdotsenko.appendNode('id', 'vdotsenko')
+                vdotsenko.appendNode('name', 'Volodymyr Dotsenko')
+                vdotsenko.appendNode('email', 'volodymyrdotsenko@gmail.com')
+            }
+        }
+    }
+}
