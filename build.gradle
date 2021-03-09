@@ -1,7 +1,8 @@
 plugins {
+    id "com.google.protobuf" version "0.8.15"
     id 'groovy'
     id 'java-gradle-plugin'
-    id "maven-publish"
+    id 'maven-publish'
 }
 
 defaultTasks 'clean', 'build'
@@ -13,11 +14,21 @@ group = 'com.volmyr'
 version = '0.0.1'
 
 repositories {
-    jcenter()
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/volodymyrd/public-mvn-repo")
+        credentials {
+            username = project.findProperty("repo.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("mvn_repo_rw.key") ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 dependencies {
+    implementation 'com.volmyr:proto-utils:0.0.25-SNAPSHOT'
+
     testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+    testImplementation 'com.google.protobuf:protobuf-java:3.12.2'
 }
 
 gradlePlugin {
@@ -48,4 +59,15 @@ task functionalTest(type: Test) {
 
 check {
     dependsOn(tasks.functionalTest)
+}
+
+protobuf {
+    //generatedFilesBaseDir = "$projectDir/build/generated/sources"
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.12.2'
+    }
+}
+
+clean {
+    delete protobuf.generatedFilesBaseDir
 }

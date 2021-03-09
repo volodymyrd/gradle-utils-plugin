@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package model.test;
+
+option java_multiple_files = true;
+option java_outer_classname = "PersonProto";
+option java_package = "com.volmyr.proto.model.test";
+
+message Person {
+  string first_name = 1;
+  string last_name = 2;
+}
