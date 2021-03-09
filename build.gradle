@@ -89,22 +89,6 @@ artifacts {
 }
 
 publishing {
-
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "Gradle-Utils-Plugins"
-            url = uri("https://maven.pkg.github.com/volodymyrd/gradle-utils-plugin")
-            credentials {
-                // ~/.gradle/gradle.properties
-                username = project.findProperty("repo.user") ?: System.getenv("USERNAME")
-                password = project.findProperty("mvn_repo_rw.key") ?: System.getenv("TOKEN")
-            }
-        }
-    }
-
     publications {
         mavenJava(MavenPublication) {
             from components.java
@@ -122,6 +106,18 @@ publishing {
                 vdotsenko.appendNode('id', 'vdotsenko')
                 vdotsenko.appendNode('name', 'Volodymyr Dotsenko')
                 vdotsenko.appendNode('email', 'volodymyrdotsenko@gmail.com')
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "Gradle-Utils-Plugins"
+            url = uri("https://maven.pkg.github.com/volodymyrd/gradle-utils-plugin")
+            credentials {
+                // ~/.gradle/gradle.properties
+                username = project.findProperty("repo.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("mvn_repo_rw.key") ?: System.getenv("TOKEN")
             }
         }
     }
