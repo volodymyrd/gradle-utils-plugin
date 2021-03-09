@@ -33,10 +33,6 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        greeting {
-            id = 'com.volmyr.gradle_plugins.utils.greeting'
-            implementationClass = 'com.volmyr.gradle_plugins.utils.GradleUtilsPluginPlugin'
-        }
         protoToPojo {
             id = 'com.volmyr.gradle_plugins.utils.protoToPojo'
             implementationClass = 'com.volmyr.gradle_plugins.utils.ProtoToPojoGradlePlugin'
