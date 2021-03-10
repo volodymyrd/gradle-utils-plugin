@@ -18,16 +18,20 @@ class ProtoToPojoGradlePlugin implements Plugin<Project> {
                 String generatedFilesBaseDir = extension.generatedFilesBaseDir
                 int numberOfFiles = 0;
                 for (ProtoToPojoGradlePluginOption option : extension.options) {
+                    String protoDirOrJar = getJarPath(project, option)
                     ProtoToPojo.Options options = ProtoToPojo.Options.builder()
                             .withDefaultValues()
-                            .protoCompiledDirOrJar(option.protoDirOrJar)
+                            .protoCompiledDirOrJar(protoDirOrJar)
                             .doc("This POJO class was created automatically from the Google protobuf file \$S.")
                             .build()
                     for (String className : option.protoClasses) {
                         project.logger.info("Generating pojo for proto class: " + className)
                         List<ProtoToPojo.Result> results = new ProtoToPojo(className, options).generate().results
                         for (ProtoToPojo.Result result : results) {
-                            String dir = generatedFilesBaseDir + "/" + result.packageName().replaceAll("\\.", "/")
+                            File dir = new File(generatedFilesBaseDir + "/" + result.packageName().replaceAll("\\.", "/"))
+                            if (!dir.exists()) {
+                                dir.mkdirs()
+                            }
                             new File(dir, result.className() + ".java") << result.pojoFile()
                         }
                         numberOfFiles += results.size()
@@ -36,5 +40,30 @@ class ProtoToPojoGradlePlugin implements Plugin<Project> {
                 project.logger.info("Successfully created ${numberOfFiles} file(s)")
             }
         }
+    }
+
+    private static String getJarPath(Project project, ProtoToPojoGradlePluginOption option) {
+        if (isNotEmpty(option.dependencyJar)) {
+            if (isNotEmpty(option.protoDirOrJar)) {
+                throw new RuntimeException("Only 'protoDirOrJar' or 'dependencyJar' parameter must be provided")
+            }
+            return resolveDep(project, option.dependencyJar)
+        } else if (!isNotEmpty(option.protoDirOrJar)) {
+            throw new RuntimeException("Please provide either 'protoDirOrJar' or 'dependencyJar' parameter")
+        }
+        return option.protoDirOrJar
+    }
+
+    private static boolean isNotEmpty(String string) {
+        if (string?.trim()) {
+            return true
+        }
+        return false
+    }
+
+    private static String resolveDep(Project project, String depName) {
+        Set<File> deps = project.getConfigurations().findByName("compileClasspath").resolve();
+        project.logger.info("Got deps ${deps} file(s)")
+        return deps.find { it.name.startsWith(depName) }
     }
 }

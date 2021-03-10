@@ -9,7 +9,6 @@ abstract class ProtoToPojoGradlePluginExtension {
     private final Project project
 
     String generatedFilesBaseDir
-    ProtoToPojoGradlePluginOption option = new ProtoToPojoGradlePluginOption();
     def options = []
 
     ProtoToPojoGradlePluginExtension(Project project) {
