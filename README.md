@@ -1,5 +1,7 @@
 # gradle-utils-plugin
 Gradle utils plugin
 
-gradle publishPluginMavenPublicationToGradle-Utils-PluginsRepository
-
+### Publish plugin
+```
+gradle publishMavenJavaPublicationToGradle-Utils-PluginsRepository
+```
